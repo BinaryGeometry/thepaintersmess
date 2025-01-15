@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('item', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->foreign('parent_id')->references('id')->on('items')->nullable();
-            $table->foreign('owner_id')->references('id')->on('users')->nullable();
+            $table->foreignId('parent_id')->constraints('items')->nullable();
+            $table->foreignId('user_id')->nullable();
             $table->string('slug')->nullable();
             $table->string('description')->nullable();
             $table->string('value')->nullable();
