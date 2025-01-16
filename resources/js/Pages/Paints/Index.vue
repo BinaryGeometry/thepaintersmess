@@ -3,6 +3,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import {Head, useForm} from '@inertiajs/vue3';
+import Paint from "@/Components/Paint.vue";
+
+defineProps(['paints']);
 
 const form = useForm({
     message: '',
@@ -24,6 +27,16 @@ const form = useForm({
                 <InputError :message="form.errors.message" class="mt-2"/>
                 <PrimaryButton class="mt-4">Add Paint</PrimaryButton>
             </form>
+
+            <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
+
+                <Paint
+                    v-for="paint in paints"
+                    :key="paint.id"
+                    :paint="paint"
+                />
+
+            </div>
         </div>
     </AppLayout>
 </template>

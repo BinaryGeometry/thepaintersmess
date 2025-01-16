@@ -16,7 +16,7 @@ class PaintController extends Controller
     public function index(Request $request): Response
     {
         return Inertia::render('Paints/Index', [
-
+            'paints' => Paint::with('user:id,name')->latest()->get(),
         ]);
 
     }
