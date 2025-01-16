@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Paint;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -57,17 +59,20 @@ class PaintController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Paint $paint)
-    {
-        //
-    }
+    public function edit(Paint $paint) {}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Paint $paint)
+    public function update(Request $request, Paint $paint): RedirectResponse
     {
-        //
+        Gate::authorize('update', $paint);
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+        $chirp->update($validated);
+
+        return redirect(route('paints.index'));
     }
 
     /**
