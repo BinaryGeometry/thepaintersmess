@@ -6,7 +6,6 @@ use App\Models\Paint;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,9 +36,20 @@ class PaintController extends Controller
     public function store(Request $request): RedirectResponse
     {
         //
+        $image_path = '';
+
+        https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
+
+        if ($request->hasFile('thumbnail')) {
+            dd('huzzah!');
+            $image_path = $request->file('image')->store('image', 'public');
+        }
+
+        dd($request); //
+
         $validated = $request->validate([
 
-            'message' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
 
         ]);
 
@@ -51,10 +61,7 @@ class PaintController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Paint $paint)
-    {
-        //
-    }
+    public function show(Paint $paint) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -68,9 +75,9 @@ class PaintController extends Controller
     {
         Gate::authorize('update', $paint);
         $validated = $request->validate([
-            'message' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
         ]);
-        $chirp->update($validated);
+        $paint->update($validated);
 
         return redirect(route('paints.index'));
     }
@@ -78,8 +85,11 @@ class PaintController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Paint $paint)
+    public function destroy(Paint $paint): RedirectResponse
     {
-        //
+        Gate::authorize('delete', $paint);
+        $paint->delete();
+
+        return redirect(route('paints.index'));
     }
 }

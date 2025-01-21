@@ -44,7 +44,7 @@ class PaintPolicy
      */
     public function delete(User $user, Paint $paint): bool
     {
-        return false;
+        return $this->update($user, $paint);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PaintController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -19,13 +20,16 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
     Route::resource('paints', PaintController::class)
-        ->only(['index', 'store']);
+        ->only(['index', 'store', 'update', 'destroy']);
 
 });
 
-//        ->middleware(['auth', 'verified']);
+Route::get('image', [ImageController::class, 'index'])->name('image.index');
+Route::get('image/create', [ImageController::class, 'create'])->name('image.create');
+Route::post('image', [ImageController::class, 'store'])->name('image.store');

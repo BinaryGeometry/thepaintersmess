@@ -5,6 +5,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import {useForm} from "@inertiajs/vue3";
 import {ref} from "vue";
 import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import InputError from "@/Components/InputError.vue";
 
 dayjs.extend(relativeTime);
 
@@ -12,7 +15,7 @@ const props = defineProps(['paint']);
 
 const form = useForm({
 
-    message: props.paint.message,
+    brand: props.paint.brand,
 
 });
 
@@ -50,11 +53,19 @@ const editing = ref(false);
                             @click="editing = true">
                             Edit
                         </button>
+                        <button :href="route('paints.destroy', paint.id)" method="delete"
+                                class="block w-full px-4 py-2 text-left text-sm leading-5 bg-white text-white-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out"
+                        >DElete
+                        </button>
+                        <DropdownLink as="button" :href="route('paints.destroy', paint.id)" method="delete"
+                        >
+                            Delete
+                        </DropdownLink>
                     </template>
                 </Dropdown>
             </div>
             <form v-if="editing"
-                  @submit.prevent="form.put(route('paints.update', chirp.id), { onSuccess: () => editing = false })">
+                  @submit.prevent="form.put(route('paints.update', paint.id), { onSuccess: () => editing = false })">
                 <textarea v-model="form.brand"
                           class="mt-4 w-full text-gray-900 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"></textarea>
                 <InputError :message="form.errors.message" class="mt-2"/>
