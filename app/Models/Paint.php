@@ -9,6 +9,7 @@ class Paint extends Model
 {
     //
     protected $fillable = [
+        'user_id',
         'brand',
         'range',
         'paint_name',

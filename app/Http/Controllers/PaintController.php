@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Paint;
+use Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -35,25 +36,31 @@ class PaintController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        //
-        $image_path = '';
-
-        https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
+        $paintPath = ''; // https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
 
         if ($request->hasFile('thumbnail')) {
-            dd('huzzah!');
-            $image_path = $request->file('image')->store('image', 'public');
+            $imagePath = $request->file('thumbnail')->store('paints');
         }
 
-        dd($request); //
+        $formData = $request->request->all();
+
+        $laptop = Paint::create([
+            'user_id' => Auth::user()->id,
+            'brand' => $formData['brand'], // e.g. Citadel, Army Painter, Vallejo
+            'range' => $formData['range'], // e.g Layer, Color Primer, Model Air
+            'paint_name' => $formData['paint_name'], // e.g Admiistratum Grey, Ash Grey,  Brown Grey
+            'paint_ref' => $formData['paint_ref'], // e.g NULL, NULL, RAL7050
+            'color_name' => $formData['color_name'], // Grey, Blue, Brown Grey
+            'color_hex' => $formData['color_hex'], // Grey, Blue, Brown Grey
+            'paint_type' => $formData['paint_type'],
+            'thumbnail' => $imagePath,
+        ])->id;
 
         $validated = $request->validate([
-
             'brand' => 'required|string|max:255',
-
         ]);
 
-        $request->user()->paints()->create($validated);
+        //        $request->user()->paints()->create($validated);
 
         return redirect(route('paints.index'));
     }
