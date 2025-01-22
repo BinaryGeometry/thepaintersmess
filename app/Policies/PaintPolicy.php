@@ -62,4 +62,9 @@ class PaintPolicy
     {
         return false;
     }
+
+    public function image(User $user, Paint $paint): bool
+    {
+        return false;
+    }
 }

@@ -3,8 +3,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import {Head, useForm} from '@inertiajs/vue3';
 import {ref} from "vue";
-import Paint from "@/Components/Paint.vue";
 import InputError from "@/Components/InputError.vue";
+import Paint from "@/Components/Paint.vue";
 
 const props = defineProps({
     paints: Object
@@ -46,8 +46,6 @@ const previewImage = (e) => {
     form.thumbnail = file;
 };
 
-const inputClass = ["block", "w-full", "border-gray-300", "focus:border-indigo-300", "focus:ring", "focus:ring-indigo-200", "focus:ring-opacity-50", "rounded-md shadow-sm", "my-1"]
-const labelClass = ["text-cyan-50"]
 
 const brandOptions = ref([
     {text: 'Citadel', value: 'Citadel'},
@@ -125,89 +123,148 @@ const selectBrand = ($event) => { // https://stackoverflow.com/questions/6652814
         }
     });
 }
+// const inputClass = ["block", "w-full", "border-gray-300", "focus:border-indigo-300", "focus:ring", "focus:ring-indigo-200", "focus:ring-opacity-50", "rounded-md shadow-sm", "my-1"]
+const labelClass = ["block", "mb-2", "text-sm", "font-medium", "text-gray-900", "dark:text-white"]
+
+const inputClass = ["bg-gray-50", "border border-gray-300", "text-gray-900", "text-sm", "rounded-lg", "focus:ring-blue-500", "focus:border-blue-500", "block", "w-full", "p-2.5", "dark:bg-gray-700", "dark:border-gray-600", "dark:placeholder-gray-400", "dark:text-white dark:focus:ring-blue-500", "dark:focus:border-blue-500"]
 </script>
 
 <template>
 
     <Head title="Paints"/>
-
+    <!--    https://flowbite.com/docs/getting-started/vue/-->
     <AppLayout title="Paints">
-        <div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
-            <form @submit.prevent="submitFormPost">
-                <!--                , { onSuccess: () => form.reset() })">-->
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 flex">
+
+            <div class="max-w-2xl p-4 sm:p-6 lg:p-8 flex-1">
+                <section
+                    class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+
+                    <form @submit.prevent="submitFormPost">
+                        <div class="grid gap-6 mb-6 md:grid-cols-2">
+                            <div>
+                                <label :class="labelClass">Brand</label>
+                                <select placeholder="range" v-model="form.brand" :class="inputClass"
+                                        @change="selectBrand($event)">
+                                    <option disabled selected value="">Please select a Brand</option>
+                                    <option v-for="option in brandOptions" :value="option.value">
+                                        {{ option.text }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label :class="labelClass">Range</label>
+                                <select placeholder="range" v-model="form.range" :class="inputClass">
+                                    <option disabled value="">Please select a Range</option>
+                                    <option v-for="option in populatedRangeOptions" :value="option.value">
+                                        {{ option.text }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
 
 
-                <label :class="labelClass">Brand</label>
-                <select placeholder="range" v-model="form.brand" :class="inputClass" @change="selectBrand($event)">
-                    <option disabled selected value="">Please select a Brand</option>
-                    <option v-for="option in brandOptions" :value="option.value">
-                        {{ option.text }}
-                    </option>
-                </select>
+                        <div class="grid gap-6 mb-6 md:grid-cols-2">
+                            <div>
+                                <label :class="labelClass">Paint Name</label>
+                                <input placeholder="" name="paint_name" v-model="form.paint_name" :class="inputClass"/>
+                            </div>
+                            <div>
+                                <label :class="labelClass">Hex Color</label>
 
-                <label :class="labelClass">Range</label>
-                <select placeholder="range" v-model="form.range" :class="inputClass">
-                    <option disabled value="">Please select a Range</option>
-                    <option v-for="option in populatedRangeOptions" :value="option.value">
-                        {{ option.text }}
-                    </option>
-                </select>
 
-                <label :class="labelClass">Paint Name</label>
-                <input placeholder="" name="paint_name" v-model="form.paint_name" :class="inputClass"/>
+                                <div class="flex">
+                              <span
+                                  class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                                <input type="color" id="head" name="head" v-model="form.color_hex"
+                                       class="flex-none my-2 rounded-full me-1 "
+                                       style="width: 24px;height: 24px;"
+                                       value="#888888"/>
+                              </span>
+                                    <input placeholder="color_hex" name="color_hex" v-model="form.color_hex"
+                                           class="flex-1 rounded-none rounded-e-lg "
 
-                <!--                <input placeholder="paint_ref" name="paint_ref" v-model="form.paint_ref" :class="inputClass"/>-->
-                <!--                <input placeholder="color_name" name="color_name" v-model="form.color_name" :class="inputClass"/>-->
-                <label :class="labelClass">Hex Color</label>
-                <div class="flex">
-                    <input type="color" id="head" name="head" v-model="form.color_hex"
-                           class="flex-none my-2 rounded-full me-1 "
-                           value="#e66465"/>
-                    <input placeholder="color_hex" name="color_hex" v-model="form.color_hex" class="flex-1"
-                           :class="inputClass"/>
+                                           :class="inputClass"/>
+                                    <!--   https://javascript.plainenglish.io/create-a-color-picker-with-vue-js-aad1a44c3d2c-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid gap-6 mb-6 md:grid-cols-2">
+
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                       for="file_input">Upload
+                                    file</label>
+                                <input
+                                    type="file"
+                                    @change="previewImage"
+                                    ref="photo"
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                />
+
+                                <div
+                                    v-if="form.errors.image"
+                                    class="font-bold text-red-600"
+                                >
+                                    {{ form.errors.image }}
+                                </div>
+                            </div>
+                            <div>
+                                <img
+                                    v-if="url.length > 0"
+                                    :src="url"
+                                    class=" mt-4 h-80 max-h-[100px]"
+                                />
+                            </div>
+                        </div>
+                        <InputError :message="form.errors.message" class="mt-2"/>
+                        <PrimaryButton
+                            class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                        >Add Paint
+                        </PrimaryButton>
+                    </form>
+
+
+                </section>
+            </div>
+            <div class="max-w-6xl p-4 sm:p-6 lg:p-8 flex-1">
+                <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
+
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead
+                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    Image
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Company
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Range
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Paint Name
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Color
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <Paint
+                                v-for="paint in paints"
+                                :key="paint.id"
+                                :paint="paint"
+                            />
+                            </tbody>
+                        </table>
+                    </div>
+
 
                 </div>
-                <!--                https://javascript.plainenglish.io/create-a-color-picker-with-vue-js-aad1a44c3d2c-->
-                <textarea
-                    name="paint_type"
-                    v-model="form.paint_type"
-                    placeholder="Type of paint"
-                    :class="inputClass"
-                ></textarea>
-
-                <input
-                    type="file"
-                    @change="previewImage"
-                    ref="photo"
-                    class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 text-cyan-50"
-                />
-                <img
-                    v-if="url.length > 0"
-                    :src="url"
-                    class="w-full mt-4 h-80"
-                />
-                <div
-                    v-if="form.errors.image"
-                    class="font-bold text-red-600"
-                >
-                    {{ form.errors.image }}
-                </div>
-                <!--                <input type="file" v-model="form.thumbnail" @input="form.thumbnail = $event.target.files[0]"/>-->
-                <!--                <progress v-if="form.progress" :value="form.progress.percentage" max="100">-->
-                <!--                    {{ form.progress.percentage }}%-->
-                <!--                </progress>-->
-                <InputError :message="form.errors.message" class="mt-2"/>
-                <PrimaryButton class="mt-4">Add Paint</PrimaryButton>
-            </form>
-
-            <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
-
-                <Paint
-                    v-for="paint in paints"
-                    :key="paint.id"
-                    :paint="paint"
-                />
-
             </div>
         </div>
     </AppLayout>

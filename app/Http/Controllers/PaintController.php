@@ -23,6 +23,18 @@ class PaintController extends Controller
 
     }
 
+    public function image(Paint $paint)
+    {
+        // get the image named $slug from storage and display it
+
+        // Something like (not sure)
+        //        Paint::with('user:id,name')->latest()->get(),
+        $image = storage_path('/app/private/'.$paint->thumbnail);
+        //        dd($paint->thumbnail);
+
+        return response()->download($image);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -39,7 +51,7 @@ class PaintController extends Controller
         $paintPath = ''; // https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
 
         if ($request->hasFile('thumbnail')) {
-            $imagePath = $request->file('thumbnail')->store('paints');
+            $imagePath = $request->file('thumbnail')->store('paints'); // http://www.netzgesta.de/mapper/
         }
 
         $formData = $request->request->all();
