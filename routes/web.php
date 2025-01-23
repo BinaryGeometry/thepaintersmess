@@ -27,6 +27,9 @@ Route::middleware([
 
     //    Route::get('paints', [PaintController::class, 'index'])->name('index');
     Route::get('paints/{paint}/image/', [PaintController::class, 'image'])->name('paints.image'); // Add a custom resource route
+    //    Route::post('paints/{paint}', [PaintController::class, 'image'])->name('paints.image'); // Add a custom resource route
+
+    //    The POST method is not supported for route paints/47. Supported methods: PUT, PATCH, DELETE.
     Route::resource('paints', PaintController::class)
         ->only(['store', 'update', 'destroy', 'index']);
 

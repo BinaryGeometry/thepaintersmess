@@ -10,10 +10,7 @@ defineProps({
     <nav aria-label="Page navigation example" class="p-1">
         <ul class="inline-flex -space-x-px text-base h-10">
             <template v-for="(link, index) in pagination.links" :key="link.label">
-
-
                 <li>
-
                     <Link
                         preserve-scroll
                         :href="link.url ?? ''"

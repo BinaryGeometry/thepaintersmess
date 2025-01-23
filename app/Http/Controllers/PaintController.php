@@ -18,7 +18,7 @@ class PaintController extends Controller
     public function index(Request $request): Response
     {
         $paints = Paint::where('user_id', Auth::user()->id)
-            ->latest()->paginate(1)
+            ->latest()->paginate(5)
             ->through(function ($item) {
                 return [
                     'id' => $item->id,
@@ -27,6 +27,7 @@ class PaintController extends Controller
                     'range' => $item->range,
                     'color_hex' => $item->color_hex,
                     'paint_name' => $item->paint_name,
+                    'thumbnail' => $item->thumbnail,
                 ];
             }); // //Creator of Inertia.js here.https://stackoverflow.com/questions/66846136/laravel-inertia-vuejs-pagination
 
