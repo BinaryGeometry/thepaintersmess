@@ -5,23 +5,25 @@ import {Head, useForm} from '@inertiajs/vue3';
 import {ref} from "vue";
 import InputError from "@/Components/InputError.vue";
 import Paint from "@/Components/Paint.vue";
+import PaintPagination from "@/Components/PaintPagination.vue";
 
 const props = defineProps({
     paints: Object
 });
+console.log(props.paints);
 
 const url = ref('')
 
 const form = useForm({
-    brand: props.paints.brand,
-    range: props.paints.range,
-    paint_name: props.paints.paint_name,
-    paint_ref: props.paints.paint_ref,
-    color_name: props.paints.color_name,
-    color_hex: props.paints.color_hex,
-    paint_type: props.paints.paint_type,
-    thumbnail: props.paints.thumbnail,
-    available: props.paints.available,
+    brand: '',
+    range: '',
+    paint_name: '',
+    paint_ref: '',
+    color_name: '',
+    color_hex: '',
+    paint_type: '',
+    thumbnail: '',
+    available: '',
 });
 
 const submitFormPost = () => {
@@ -255,12 +257,13 @@ const inputClass = ["bg-gray-50", "border border-gray-300", "text-gray-900", "te
                             <tbody>
 
                             <Paint
-                                v-for="paint in paints"
+                                v-for="paint in paints.data"
                                 :key="paint.id"
                                 :paint="paint"
                             />
                             </tbody>
                         </table>
+                        <PaintPagination :pagination="paints"></PaintPagination>
                     </div>
 
 

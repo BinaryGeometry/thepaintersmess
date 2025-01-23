@@ -12,6 +12,7 @@ import InputError from "@/Components/InputError.vue";
 dayjs.extend(relativeTime);
 
 const props = defineProps(['paint']);
+// Uncaught (in promise) TypeError: $props.paint.user is undefined
 
 const form = useForm({
 
@@ -19,29 +20,29 @@ const form = useForm({
 
 });
 
+console.log('HERE', props.paint);
+
 const editing = ref(false);
 </script>
 
 <template>
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 h-full">
-        <th scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white h-full">
-            <img class="h-full" style="height:21px;" :src="'/paints/'+paint.id+'/image/'" alt="paint-image"/>
-        </th>
-        <th scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white h-full">
+        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white h-full">
+            <img class="h-full" style="height:21px;" :src="'/paints/'+paint.id+'/image/'" alt="No Image"/>
+        </td>
+        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white h-full">
             {{ paint.brand }}
-        </th>
-        <td class="px-6 py-4 h-full">
+        </td>
+        <td class="px-6 py-4 h-full font-medium  text-gray-900 whitespace-nowrap dark:text-white h-ful">
             {{ paint.range }}
         </td>
-        <td class="px-6 py-4 h-full">
+        <td class="px-6 py-4 h-full font-medium text-gray-900 whitespace-nowrap dark:text-white h-ful">
             <span class="my-5px" :style="{'background-color':paint.color_hex }"
                   style="margin-right:5px;width:20px;height:100%;display:block;float:left;"></span>
             {{ paint.paint_name }}
         </td>
-        <td class="px-6 py-4 h-full">
-            <Dropdown v-if="paint.user.id === $page.props.auth.user.id">
+        <td class="px-6 py-4 h-full font-medium text-gray-900 whitespace-nowrap dark:text-white h-ful">
+            <Dropdown v-if="paint.user_id === $page.props.auth.user.id">
                 <template #trigger>
                     <button>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20"

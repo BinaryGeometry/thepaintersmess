@@ -25,9 +25,11 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
+    //    Route::get('paints', [PaintController::class, 'index'])->name('index');
     Route::get('paints/{paint}/image/', [PaintController::class, 'image'])->name('paints.image'); // Add a custom resource route
     Route::resource('paints', PaintController::class)
-        ->only(['index', 'store', 'update', 'destroy', 'image']);
+        ->only(['store', 'update', 'destroy', 'index']);
+
     // https://davecalnan.blog/laravel-routing-gotchas must be {paint} not {id}
 });
 

@@ -17,8 +17,21 @@ class PaintController extends Controller
      */
     public function index(Request $request): Response
     {
+        $paints = Paint::where('user_id', Auth::user()->id)
+            ->latest()->paginate(1)
+            ->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'user_id' => $item->user_id,
+                    'brand' => $item->brand,
+                    'range' => $item->range,
+                    'color_hex' => $item->color_hex,
+                    'paint_name' => $item->paint_name,
+                ];
+            }); // //Creator of Inertia.js here.https://stackoverflow.com/questions/66846136/laravel-inertia-vuejs-pagination
+
         return Inertia::render('Paints/Index', [
-            'paints' => Paint::with('user:id,name')->latest()->get(),
+            'paints' => $paints,
         ]);
 
     }
@@ -49,7 +62,7 @@ class PaintController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $paintPath = ''; // https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
-
+        $imagePath = null;
         if ($request->hasFile('thumbnail')) {
             $imagePath = $request->file('thumbnail')->store('paints'); // http://www.netzgesta.de/mapper/
         }
