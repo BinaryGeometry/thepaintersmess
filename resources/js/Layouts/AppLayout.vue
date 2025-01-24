@@ -26,9 +26,13 @@ const logout = () => {
     router.post(route('logout'));
 };
 </script>
+<style>
+
+
+</style>
 
 <template>
-    <div>
+    <div class="">
         <Head :title="title"/>
 
         <Banner/>
@@ -53,6 +57,9 @@ const logout = () => {
                                 </NavLink>
                                 <NavLink :href="route('paints.index')" :active="route().current('paints.index')">
                                     Paints
+                                </NavLink>
+                                <NavLink :href="route('recipes.index')" :active="route().current('recipes.index')">
+                                    Recipes
                                 </NavLink>
                             </div>
                         </div>
@@ -318,7 +325,7 @@ const logout = () => {
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main class="bg-[url(/images/moroccan-flower-dark.png)] background-tile">
                 <slot/>
             </main>
         </div>

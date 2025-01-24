@@ -15,6 +15,9 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            backgroundImage: {
+                'background-tile': "url('../images/moroccan-flower-dark.png')",
+            }
         },
     },
 

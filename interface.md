@@ -219,3 +219,16 @@ robes: Chaos Black
         },
     ]
 ]
+```
+
+## Created that in a file storage/app/private/interface.json
+
+$ php artisan serve
+php artisan make:model -mrc Recipe
+php artisan make:model -m Step
+
+#
+
+https://laracasts.com/discuss/channels/vite/using-background-images-in-tailwind-vite-laravel-environment
+
+

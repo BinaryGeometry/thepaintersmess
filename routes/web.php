@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PaintController;
+use App\Http\Controllers\RecipeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +33,9 @@ Route::middleware([
     //    The POST method is not supported for route paints/47. Supported methods: PUT, PATCH, DELETE.
     Route::resource('paints', PaintController::class)
         ->only(['store', 'update', 'destroy', 'index']);
+
+    Route::resource('recipes', RecipeController::class)
+        ->only(['index', 'store', 'update', 'destroy', 'index']);
 
     // https://davecalnan.blog/laravel-routing-gotchas must be {paint} not {id}
 });
