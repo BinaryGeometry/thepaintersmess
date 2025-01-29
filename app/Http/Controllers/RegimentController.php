@@ -45,8 +45,23 @@ class RegimentController extends Controller
                 ];
             });
 
+        $choices = DB::select('
+        select
+            i.slug,
+            i.id as ancestor_id,
+            i_game.name as text,
+            i_game.id as value
+        from item i
+        join item i_game on i.id = i_game.parent_id
+        where i.parent_id IS NULL
+        ');
+        //            where active = ?', [1]);
+
+        //        dd($choices);
+
         return Inertia::render('Regiments/Index', [
             'regiments' => $regiments,
+            'choices' => $choices,
         ]);
 
     }
@@ -92,7 +107,7 @@ class RegimentController extends Controller
             'detachment_id' => $formData['detachment_id'], // e.g NULL, NULL, RAL7050
             'unit_id' => $formData['unit_id'], // Grey, Blue, Brown Grey
             'meta' => $formData['meta'], // Grey, Blue, Brown Grey
-            'user_id' => $formData['user_id'],
+            'user_id' => Auth::user()->id,
             //            'thumbnail' => $imagePath,
         ])->id;
 

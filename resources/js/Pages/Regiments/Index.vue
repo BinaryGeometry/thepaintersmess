@@ -3,10 +3,12 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {Head} from '@inertiajs/vue3';
 import Pagination from "@/Components/Regiments/Pagination.vue";
 import RegimentList from "@/Components/Regiments/RegimentList.vue";
+import NewRegiment from "@/Components/Regiments/NewRegiment.vue";
 import {ref} from "vue";
 
 const props = defineProps({
-    regiments: Object
+    regiments: Object,
+    choices: Array
 });
 
 const listData = ref(props.regiments);
@@ -24,7 +26,7 @@ const listData = ref(props.regiments);
                 <section
                     class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
 
-                    <!--                    <Edit :paint="{}" :endpoint="'paints.store'"/>-->
+                    <NewRegiment :regiment="{}" :choices="props.choices" :endpoint="'regiments.store'"/>
 
                 </section>
             </div>
