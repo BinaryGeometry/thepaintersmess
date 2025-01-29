@@ -3,6 +3,7 @@
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PaintController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\RegimentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,9 +30,11 @@ Route::middleware([
     //    Route::get('paints', [PaintController::class, 'index'])->name('index');
     Route::get('paints/{paint}/image/', [PaintController::class, 'image'])->name('paints.image'); // Add a custom resource route
     //    Route::post('paints/{paint}', [PaintController::class, 'image'])->name('paints.image'); // Add a custom resource route
-
     //    The POST method is not supported for route paints/47. Supported methods: PUT, PATCH, DELETE.
     Route::resource('paints', PaintController::class)
+        ->only(['store', 'update', 'destroy', 'index']);
+
+    Route::resource('regiments', RegimentController::class)
         ->only(['store', 'update', 'destroy', 'index']);
 
     Route::resource('recipes', RecipeController::class)

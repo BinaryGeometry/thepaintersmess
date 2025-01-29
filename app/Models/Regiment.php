@@ -11,6 +11,19 @@ class Regiment extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'user_id',
+        'brand',
+        'range',
+        'paint_name',
+        'paint_ref',
+        'color_name',
+        'color_hex',
+        'paint_type',
+        'thumbnail',
+        'available',
+    ];
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Regiment::class, 'parent_id');

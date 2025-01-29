@@ -2,51 +2,141 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegimentRequest;
-use App\Http\Resources\RegimentResource;
 use App\Models\Regiment;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RegimentController extends Controller
 {
-    use AuthorizesRequests;
-
-    public function index()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request): Response
     {
-        $this->authorize('viewAny', Regiment::class);
+        //        $regiments = Regiment::where('user_id', Auth::user()->id)
+        $regiments = DB::table('regiments')
+            ->where('regiments.user_id', '=', Auth::user()->id)
+            ->join('item as game', 'game.id', '=', 'regiments.game_id')
+            ->leftJoin('item as faction', 'faction.id', '=', 'regiments.faction_id')
+            ->leftJoin('item as detachment', 'detachment.id', '=', 'regiments.detachment_id')
+            ->latest()->paginate(5, [
+                'regiments.*',
+                'game.name as game_name',
+                'faction.name as faction_name',
+                'detachment.name as detachment_name',
+            ])
+            ->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'game_name' => $item->game_name,
+                    'game_id' => $item->game_id,
+                    'faction_id' => $item->faction_id,
+                    'faction_name' => $item->faction_name,
+                    'detachment_id' => $item->detachment_id,
+                    'detachment_name' => $item->detachment_name,
+                    'unit_id' => $item->unit_id,
+                    'meta' => $item->meta,
+                    'user_id' => $item->user_id,
+                ];
+            });
 
-        return RegimentResource::collection(Regiment::all());
+        return Inertia::render('Regiments/Index', [
+            'regiments' => $regiments,
+        ]);
+
     }
 
-    public function store(RegimentRequest $request)
+    public function image(Regiment $regiment)
     {
-        $this->authorize('create', Regiment::class);
+        // get the image named $slug from storage and display it
 
-        return new RegimentResource(Regiment::create($request->validated()));
+        // Something like (not sure)
+        //        Paint::with('user:id,name')->latest()->get(),
+        $image = storage_path('/app/private/'.$regiment->thumbnail);
+        //        dd($paint->thumbnail);
+
+        return response()->download($image);
     }
 
-    public function show(Regiment $regiment)
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $this->authorize('view', $regiment);
-
-        return new RegimentResource($regiment);
+        //
     }
 
-    public function update(RegimentRequest $request, Regiment $regiment)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        $this->authorize('update', $regiment);
+        $paintPath = ''; // https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
+        $imagePath = null;
+        if ($request->hasFile('thumbnail')) {
+            $imagePath = $request->file('thumbnail')->store('paints'); // http://www.netzgesta.de/mapper/
+        }
 
-        $regiment->update($request->validated());
+        $formData = $request->request->all();
 
-        return new RegimentResource($regiment);
+        $laptop = Regiment::create([
+            'id' => $formData['id'],
+            'slug' => $formData['slug'], // e.g. Citadel, Army Painter, Vallejo
+            'game_id' => $formData['game_id'], // e.g Layer, Color Primer, Model Air
+            'faction_id' => $formData['faction_id'], // e.g Admiistratum Grey, Ash Grey,  Brown Grey
+            'detachment_id' => $formData['detachment_id'], // e.g NULL, NULL, RAL7050
+            'unit_id' => $formData['unit_id'], // Grey, Blue, Brown Grey
+            'meta' => $formData['meta'], // Grey, Blue, Brown Grey
+            'user_id' => $formData['user_id'],
+            //            'thumbnail' => $imagePath,
+        ])->id;
+
+        $validated = $request->validate([
+            'brand' => 'required|string|max:255',
+        ]);
+
+        //        $request->user()->paints()->create($validated);
+
+        return redirect(route('regiments.index'));
     }
 
-    public function destroy(Regiment $regiment)
-    {
-        $this->authorize('delete', $regiment);
+    /**
+     * Display the specified resource.
+     */
+    //    public function show(Paint $paint) {}
 
-        $regiment->delete();
+    /**
+     * Show the form for editing the specified resource.
+     */
+    //    public function edit(Paint $paint) {}
 
-        return response()->json();
-    }
+    /**
+     * Update the specified resource in storage.
+     */
+    //    public function update(Request $request, Paint $paint): RedirectResponse
+    //    {
+    //        Gate::authorize('update', $paint);
+    //        $validated = $request->validate([
+    //            'brand' => 'required|string|max:255',
+    //        ]);
+    //        $paint->update($validated);
+    //
+    //        return redirect(route('paints.index'));
+    //    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    //    public function destroy(Paint $paint): RedirectResponse
+    //    {
+    //        Gate::authorize('delete', $paint);
+    //        $paint->delete();
+    //
+    //        return redirect(route('paints.index'));
+    //    }
 }

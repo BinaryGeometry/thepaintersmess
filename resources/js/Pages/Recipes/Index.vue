@@ -104,8 +104,7 @@ const activeFaction = ref(props.instance.gamesystems[1].factions[2])
                 </ul>
             </div>
         </aside>
-
-
+        
         <div class="p-4 sm:ml-64">
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
                 <h2 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
