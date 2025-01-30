@@ -2,7 +2,6 @@
 import dayjs from 'dayjs';
 
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {useForm} from "@inertiajs/vue3";
 import {ref} from "vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -10,16 +9,17 @@ import PaintEdit from "@/Components/Paints/PaintEdit.vue";
 
 dayjs.extend(relativeTime);
 
-const props = defineProps(['paint']);
-// Uncaught (in promise) TypeError: $props.paint.user is undefined
-
-const form = useForm({
-
-    brand: props.paint.brand,
-
+const props = defineProps({
+    paint: Object
 });
 
-console.log('HERE', props.paint);
+// const form = useForm({
+//
+//     brand: props.paint.brand,
+//
+// });
+
+// console.log('HERE', props.paint);
 
 const editing = ref(false);
 </script>

@@ -34,6 +34,7 @@ Route::middleware([
     Route::resource('paints', PaintController::class)
         ->only(['store', 'update', 'destroy', 'index']);
 
+    Route::get('regiments/{regiment}/image/', [RegimentController::class, 'image'])->name('regiments.image'); // Add a custom resource route
     Route::resource('regiments', RegimentController::class)
         ->only(['store', 'update', 'destroy', 'index']);
 

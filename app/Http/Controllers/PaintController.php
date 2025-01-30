@@ -82,9 +82,9 @@ class PaintController extends Controller
             'thumbnail' => $imagePath,
         ])->id;
 
-        $validated = $request->validate([
-            'brand' => 'required|string|max:255',
-        ]);
+        //        $validated = $request->validate([
+        //            'brand' => 'required|string|max:255',
+        //        ]);
 
         //        $request->user()->paints()->create($validated);
 

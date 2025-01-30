@@ -192,18 +192,31 @@ if (props.paint.thumbnail) {
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                        for="file_input">Upload
                     file</label>
-                <input
-                    type="file"
-                    @change="previewImage"
-                    ref="photo"
-                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                />
+                <div class="flex">
+
+                    <input
+                        type="file"
+                        @change="previewImage"
+                        ref="photo"
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-l-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    />
+                    <span
+                        class="inline-flex items-center px-0 text-sm overflow-hidden text-gray-900 bg-gray-200 border rounded-r-lg border-gray-300 border-s-0 dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+
+                         <img
+                             v-if="url.length > 0"
+                             :src="url"
+                             class=" h-80 max-h-[36px]"
+                         />
+                    </span>
+                </div>
                 <div
                     v-if="form.errors.image"
                     class="font-bold text-red-600"
                 >
                     {{ form.errors.image }}
                 </div>
+
             </div>
             <div>
                 <img

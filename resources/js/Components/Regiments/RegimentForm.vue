@@ -19,17 +19,24 @@ const form = useForm({
     thumbnail: props.regiment.thumbnail || '',
 });
 
-const submitFormPost = () => {
+const submitForm = () => {
     const formData = new FormData();
     formData.append('name', form.name)
     formData.append('game_id', form.game_id)
     formData.append('faction_id', form.faction_id)
     formData.append('detachment_id', form.detachment_id)
     formData.append('thumbnail', form.thumbnail)
-    form.put(route(props.endpoint, {
-        body: formData,
-        paint: props.regiment.id
-    }))
+    if (props.endpoint.includes('store')) {
+        form.post(route(props.endpoint, {
+            body: formData,
+        }))
+    } else {
+        form.post(route(props.endpoint, {
+            _method: 'put', // https://inertiajs.com/file-uploads
+            body: formData,
+            regiment: props.regiment.id
+        }))
+    }
 };
 
 const previewImage = (e) => {
@@ -71,7 +78,7 @@ const inputClass = ["bg-gray-50", "border border-gray-300", "text-gray-900", "te
 // }
 </script>
 <template>
-    <form @submit.prevent="submitFormPost">
+    <form @submit.prevent="submitForm">
         <div class="grid gap-6 mb-6 md:grid-cols-3">
             <div>
                 <label :class="labelClass">Game</label>
@@ -107,30 +114,32 @@ const inputClass = ["bg-gray-50", "border border-gray-300", "text-gray-900", "te
                 <label :class="labelClass">Army Name</label>
                 <input placeholder="" name="paint_name" v-model="form.name" :class="inputClass"/>
             </div>
-        </div>
-        <div class="grid gap-6 mb-6 md:grid-cols-2">
             <div>
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                       for="file_input">Image</label>
-                <input
-                    type="file"
-                    @change="previewImage"
-                    ref="photo"
-                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                />
+                <label :class="labelClass">Image</label>
+                <div class="flex">
+
+                    <input
+                        type="file"
+                        @change="previewImage"
+                        ref="photo"
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-l-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    />
+                    <span
+                        class="inline-flex items-center px-0 text-sm overflow-hidden text-gray-900 bg-gray-200 border rounded-r-lg border-gray-300 border-s-0 dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+
+                         <img
+                             v-if="url.length > 0"
+                             :src="url"
+                             class=" h-80 max-h-[36px]"
+                         />
+                    </span>
+                </div>
                 <div
                     v-if="form.errors.image"
                     class="font-bold text-red-600"
                 >
                     {{ form.errors.image }}
                 </div>
-            </div>
-            <div>
-                <img
-                    v-if="url.length > 0"
-                    :src="url"
-                    class=" mt-4 h-80 max-h-[100px]"
-                />
             </div>
         </div>
         <InputError :message="form.errors.message" class="mt-2"/>

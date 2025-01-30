@@ -12,16 +12,15 @@ class Regiment extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'unit_id',
+        'detachment_id',
+        'faction_id',
+        'game_id',
+        'meta',
+        'slug',
         'user_id',
-        'brand',
-        'range',
-        'paint_name',
-        'paint_ref',
-        'color_name',
-        'color_hex',
-        'paint_type',
         'thumbnail',
-        'available',
+        'name',
     ];
 
     public function parent(): BelongsTo

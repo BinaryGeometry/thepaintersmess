@@ -2,9 +2,9 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {Head} from '@inertiajs/vue3';
 import PaintEdit from "@/Components/Paints/PaintEdit.vue";
-//
-import Paint from "@/Components/Paints/Paint.vue";
-import PaintPagination from "@/Components/Paints/PaintPagination.vue";
+import PaintList from "@/Components/Paints/PaintList.vue";
+
+import Pagination from "@/Components/Pagination.vue";
 
 const props = defineProps({
     paints: Object
@@ -176,14 +176,14 @@ const props = defineProps({
                             </thead>
                             <tbody>
 
-                            <Paint
+                            <PaintList
                                 v-for="paint in paints.data"
                                 :key="paint.id"
                                 :paint="paint"
                             />
                             </tbody>
                         </table>
-                        <PaintPagination :pagination="paints"></PaintPagination>
+                        <Pagination :pagination="paints"></Pagination>
                     </div>
 
 

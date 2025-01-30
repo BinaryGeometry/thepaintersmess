@@ -10,17 +10,43 @@ class RegimentPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool {}
+    public function viewAny(User $user): bool
+    {
+        return false;
+    }
 
-    public function view(User $user, Regiment $regiment): bool {}
+    public function view(User $user, Regiment $regiment): bool
+    {
+        return false;
+    }
 
-    public function create(User $user): bool {}
+    public function create(User $user): bool
+    {
+        return false;
+    }
 
-    public function update(User $user, Regiment $regiment): bool {}
+    public function update(User $user, Regiment $regiment): bool
+    {
+        return $regiment->user()->is($user);
+    }
 
-    public function delete(User $user, Regiment $regiment): bool {}
+    public function delete(User $user, Regiment $regiment): bool
+    {
+        return $this->update($user, $regiment);
+    }
 
-    public function restore(User $user, Regiment $regiment): bool {}
+    public function restore(User $user, Regiment $regiment): bool
+    {
+        return false;
+    }
 
-    public function forceDelete(User $user, Regiment $regiment): bool {}
+    public function forceDelete(User $user, Regiment $regiment): bool
+    {
+        return false;
+    }
+
+    public function image(User $user, Regiment $regiment): bool
+    {
+        return false;
+    }
 }

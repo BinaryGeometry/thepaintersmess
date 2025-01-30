@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,7 +18,6 @@ class RegimentController extends Controller
      */
     public function index(Request $request): Response
     {
-        //        $regiments = Regiment::where('user_id', Auth::user()->id)
         $regiments = DB::table('regiments')
             ->where('regiments.user_id', '=', Auth::user()->id)
             ->join('item as game', 'game.id', '=', 'regiments.game_id')
@@ -46,18 +46,15 @@ class RegimentController extends Controller
             });
 
         $choices = DB::select('
-        select
-            i.slug,
-            i.id as ancestor_id,
-            i_game.name as text,
-            i_game.id as value
-        from item i
-        join item i_game on i.id = i_game.parent_id
-        where i.parent_id IS NULL
-        ');
-        //            where active = ?', [1]);
-
-        //        dd($choices);
+            select
+                i.slug,
+                i.id as ancestor_id,
+                i_game.name as text,
+                i_game.id as value
+            from item i
+            join item i_game on i.id = i_game.parent_id
+            where i.parent_id IS NULL
+        '); // where active = ?', [1]);
 
         return Inertia::render('Regiments/Index', [
             'regiments' => $regiments,
@@ -66,14 +63,13 @@ class RegimentController extends Controller
 
     }
 
+    /**
+     * Get the image named $slug from storage and display it
+     */
     public function image(Regiment $regiment)
     {
-        // get the image named $slug from storage and display it
 
-        // Something like (not sure)
-        //        Paint::with('user:id,name')->latest()->get(),
         $image = storage_path('/app/private/'.$regiment->thumbnail);
-        //        dd($paint->thumbnail);
 
         return response()->download($image);
     }
@@ -94,28 +90,22 @@ class RegimentController extends Controller
         $paintPath = ''; // https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
         $imagePath = null;
         if ($request->hasFile('thumbnail')) {
-            $imagePath = $request->file('thumbnail')->store('paints'); // http://www.netzgesta.de/mapper/
+            $imagePath = $request->file('thumbnail')->store('regiments'); // http://www.netzgesta.de/mapper/
         }
 
         $formData = $request->request->all();
 
-        $laptop = Regiment::create([
-            'id' => $formData['id'],
-            'slug' => $formData['slug'], // e.g. Citadel, Army Painter, Vallejo
-            'game_id' => $formData['game_id'], // e.g Layer, Color Primer, Model Air
-            'faction_id' => $formData['faction_id'], // e.g Admiistratum Grey, Ash Grey,  Brown Grey
-            'detachment_id' => $formData['detachment_id'], // e.g NULL, NULL, RAL7050
-            'unit_id' => $formData['unit_id'], // Grey, Blue, Brown Grey
-            'meta' => $formData['meta'], // Grey, Blue, Brown Grey
+        $storeData = [
+            'name' => $formData['name'],
+            'game_id' => (int) $formData['game_id'], // e.g Layer, Color Primer, Model Air
+            'faction_id' => (int) $formData['faction_id'], // e.g Admiistratum Grey, Ash Grey,  Brown Grey
+            'detachment_id' => (int) $formData['detachment_id'], // e.g NULL, NULL, RAL7050
+            //            'unit_id' => $formData['unit_id'] || '', // Grey, Blue, Brown Grey
             'user_id' => Auth::user()->id,
-            //            'thumbnail' => $imagePath,
-        ])->id;
+            'thumbnail' => $imagePath,
+        ];
 
-        $validated = $request->validate([
-            'brand' => 'required|string|max:255',
-        ]);
-
-        //        $request->user()->paints()->create($validated);
+        $laptop = Regiment::create($storeData)->id;
 
         return redirect(route('regiments.index'));
     }
@@ -123,26 +113,47 @@ class RegimentController extends Controller
     /**
      * Display the specified resource.
      */
-    //    public function show(Paint $paint) {}
+    public function show(Regiment $regiment) {}
 
     /**
      * Show the form for editing the specified resource.
      */
-    //    public function edit(Paint $paint) {}
+    public function edit(Regiment $regiment) {}
 
     /**
      * Update the specified resource in storage.
      */
-    //    public function update(Request $request, Paint $paint): RedirectResponse
-    //    {
-    //        Gate::authorize('update', $paint);
-    //        $validated = $request->validate([
-    //            'brand' => 'required|string|max:255',
-    //        ]);
-    //        $paint->update($validated);
-    //
-    //        return redirect(route('paints.index'));
-    //    }
+    public function update(Request $request, Regiment $regiment): RedirectResponse
+    {
+        Gate::authorize('update', $regiment);
+
+        $imagePath = null;
+        if ($request->hasFile('thumbnail')) {
+            $imagePath = $request->file('thumbnail')->store('regiments'); // http://www.netzgesta.de/mapper/
+        }
+
+        $formData = $request->request->all();
+
+        $updateData = [
+            //            'slug' => $formData['slug'], // e.g. Citadel, Army Painter, Vallejo
+            'game_id' => $formData['game_id'], // e.g Layer, Color Primer, Model Air
+            'faction_id' => $formData['faction_id'], // e.g Admiistratum Grey, Ash Grey,  Brown Grey
+            'detachment_id' => $formData['detachment_id'], // e.g NULL, NULL, RAL7050
+            //            'unit_id' => $formData['unit_id'], // Grey, Blue, Brown Grey
+            //            'meta' => $formData['meta'], // Grey, Blue, Brown Grey
+            'name' => $formData['name'],
+            'thumbnail' => $imagePath,
+        ];
+
+        $regiment->update($updateData);
+
+        //        $validated = $request->validate([
+        //            'brand' => 'required|string|max:255',
+        //        ]);
+        //        $paint->update($validated);
+
+        return redirect(route('regiments.index'));
+    }
 
     /**
      * Remove the specified resource from storage.
