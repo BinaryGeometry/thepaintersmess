@@ -22,7 +22,8 @@ const form = useForm({
     available: props.paint.available || '',
 });
 
-const submitFormPost = () => {
+const submitForm = () => {
+    console.log(props.endpoint);
     const formData = new FormData();
     formData.append('brand', form.brand)
     formData.append('range', form.range)
@@ -33,10 +34,17 @@ const submitFormPost = () => {
     formData.append('paint_type', form.paint_type)
     formData.append('thumbnail', form.thumbnail)
     formData.append('available', form.available)
-    form.put(route(props.endpoint, {
-        body: formData,
-        paint: props.paint.id
-    }))
+    if (props.endpoint.includes('store')) {
+        form.post(route(props.endpoint, {
+            body: formData,
+        }))
+    } else {
+        form.post(route(props.endpoint, {
+            _method: 'put', // https://inertiajs.com/file-uploads
+            body: formData,
+            paint: props.paint.id
+        }))
+    }
 };
 
 const previewImage = (e) => {
@@ -134,7 +142,7 @@ if (props.paint.thumbnail) {
 }
 </script>
 <template>
-    <form @submit.prevent="submitFormPost">
+    <form @submit.prevent="submitForm">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
             <div>
                 <label :class="labelClass">Brand</label>

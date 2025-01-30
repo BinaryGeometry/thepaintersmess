@@ -107,12 +107,30 @@ class PaintController extends Controller
     public function update(Request $request, Paint $paint): RedirectResponse
     {
         Gate::authorize('update', $paint);
-        $validated = $request->validate([
-            'brand' => 'required|string|max:255',
-        ]);
-        $paint->update($validated);
+        //        $validated = $request->validate([
+        //            'brand' => 'required|string|max:255',
+        //        ]);
+        $imagePath = null;
+        if ($request->hasFile('thumbnail')) {
+            $imagePath = $request->file('thumbnail')->store('paints'); // http://www.netzgesta.de/mapper/
+        }
 
-        return redirect(route('paints.index'));
+        $formData = $request->request->all();
+
+        $updateData = [
+            'brand' => $formData['brand'], // e.g. Citadel, Army Painter, Vallejo
+            'range' => $formData['range'], // e.g Layer, Color Primer, Model Air
+            'paint_name' => $formData['paint_name'], // e.g Admiistratum Grey, Ash Grey,  Brown Grey
+            'paint_ref' => $formData['paint_ref'], // e.g NULL, NULL, RAL7050
+            'color_name' => $formData['color_name'], // Grey, Blue, Brown Grey
+            'color_hex' => $formData['color_hex'], // Grey, Blue, Brown Grey
+            'paint_type' => $formData['paint_type'],
+            'thumbnail' => $imagePath,
+        ];
+
+        $paint->update($updateData);
+
+        return redirect(route('paints.index')); // https://stackoverflow.com/questions/23505875/laravel-routeresource-vs-routecontroller // https://laracasts.com/discuss/channels/inertia/inertia-detect-api-request-303-in-nuxt-js-and-laravel
     }
 
     /**
