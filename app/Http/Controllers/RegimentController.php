@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Regiment;
 use Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ class RegimentController extends Controller
     public function index(Request $request): Response
     {
         $regiments = DB::table('regiments')
+            ->whereNull('regiments.unit_id')
             ->where('regiments.user_id', '=', Auth::user()->id)
             ->join('item as game', 'game.id', '=', 'regiments.game_id')
             ->leftJoin('item as faction', 'faction.id', '=', 'regiments.faction_id')
@@ -153,6 +155,18 @@ class RegimentController extends Controller
         //        $paint->update($validated);
 
         return redirect(route('regiments.index'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function units(Request $request, Regiment $regiment): JsonResponse
+    {
+        // https://dev.to/bradisrad83/proper-json-responses-for-laravel-api-2jfo
+        $units = DB::table('regiments')
+            ->where('regiments.unit_id', '=', $regiment->id)->get();
+
+        return response()->json($units);
     }
 
     /**
