@@ -39,24 +39,27 @@ watch(props.regiment, () => async (newQuestion, oldQuestion) => {
         <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
 
           <div class="relative">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table class="table-fixed w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead
                   class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3  w-[150px]">
                   Gamesystem
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3  w-[100px]">
                   Faction
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3  w-[100px]">
                   Detachment
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 w-[100px]">
                   Image
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" class="px-6 py-3 w-[200px]">
                   Army
+                </th>
+                <th scope="col" class="px-6 py-3 w-[132px]">
+                  &nbsp;
                 </th>
                 <th scope="col" class="px-6 py-3">
                   Unit
