@@ -36,6 +36,7 @@ Route::middleware([
 
     Route::get('regiments/{regiment}/image/', [RegimentController::class, 'image'])->name('regiments.image'); // Add a custom resource route
     Route::get('regiments/{regiment}/units/', [RegimentController::class, 'units'])->name('regiments.units'); // Add a custom resource route
+    Route::post('regiments/{regiment}/units/', [RegimentController::class, 'storeUnit'])->name('regiments.store.unit'); // Add a custom resource route
 
     Route::resource('regiments', RegimentController::class)
         ->only(['store', 'update', 'destroy', 'index']);

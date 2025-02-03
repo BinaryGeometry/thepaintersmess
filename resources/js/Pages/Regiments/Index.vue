@@ -4,7 +4,7 @@ import {Head} from '@inertiajs/vue3';
 import Pagination from "@/Components/Pagination.vue";
 import RegimentList from "@/Components/Regiments/RegimentList.vue";
 import NewRegiment from "@/Components/Regiments/RegimentForm.vue";
-import {reactive, watch} from "vue";
+import {reactive} from "vue";
 
 const props = defineProps({
   regiments: Object,
@@ -14,9 +14,9 @@ const props = defineProps({
 const listData = reactive(props.regiments); // https://michaelnthiessen.com/ref-vs-reactive/
 // https://stackoverflow.com/questions/63580187/vue-3-0-how-to-assign-a-prop-to-a-ref-without-changing-the-prop
 
-watch(props.regiment, () => async (newQuestion, oldQuestion) => {
-  // (team) => form.users = team.users
-});
+// watch(props.regiment, () => async (newQuestion, oldQuestion) => {
+//   // (team) => form.users = team.users
+// });
 
 </script>
 

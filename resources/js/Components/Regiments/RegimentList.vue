@@ -3,12 +3,10 @@ import dayjs from 'dayjs';
 
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {ref} from "vue";
-import Dropdown from "@/Components/Dropdown.vue";
-import DropdownLink from "@/Components/DropdownLink.vue";
 import RegimentForm from "@/Components/Regiments/RegimentForm.vue";
 import {useForm} from "@inertiajs/vue3";
 import UnitList from "@/Components/Regiments/UnitList.vue";
-
+import UnitForm from "@/Components/Regiments/UnitForm.vue";
 
 dayjs.extend(relativeTime);
 
@@ -105,12 +103,10 @@ const listUnits = ref(false)
     </td>
 
     <td class="px-6 py-4 h-full font-medium text-gray-900 whitespace-nowrap dark:text-white h-full">
-      <!--            {{ paint.name }}-->
-      <button
-          v-if="!editing"
-          class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-1 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
-          @click="listUnits = !listUnits">
-
+      <button alt="Add Unit"
+              v-if="!editing"
+              class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-1 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
+              @click="addUnit = !addUnit">
         <svg class="w-6 h-6 border-1 text-gray-800 dark:text-white" aria-hidden="true"
              xmlns="http://www.w3.org/2000/svg"
              width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -118,46 +114,22 @@ const listUnits = ref(false)
                 d="M5 12h14m-7 7V5"/>
         </svg>
       </button>
-      <button
-          v-if="!editing"
-          class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-1 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
-          @click="listUnits = !listUnits">
-
-
-      </button>
     </td>
     <td class="px-6 py-4 h-full font-medium text-gray-900 whitespace-nowrap dark:text-white h-full">
 
-
-      <Dropdown v-if="regiment.user_id === $page.props.auth.user.id && !editing && false">
-        <template #trigger>
-          <button>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20"
-                 fill="currentColor">
-              <path
-                  d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/>
-            </svg>
-          </button>
-        </template>
-        <template #content class="bg-white">
-          <button
-              class="block w-full px-4 py-2 text-left text-sm leading-5 bg-white text-white-700 hover:bg-gray-100 focus:bg-gray-100 transition duration-150 ease-in-out"
-              @click="editing = true">
-            Edit
-          </button>
-          <DropdownLink as="button" :href="route('paints.destroy', paint.id)" method="delete"
-          >
-            Delete
-          </DropdownLink>
-        </template>
-      </Dropdown>
     </td>
   </tr>
   <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" v-if="editing">
-
     <td colspan="9" class="p-5 bg-[#5983c1] border border-l-0 border-r-0 border-[#203D75]
      border-t-gray-700 dark:bg-gray-800">
-      <RegimentForm :regiment="regiment" :choices="props.choices" :endpoint="'regiments.update'"/>
+      <RegimentForm :regiment="regiment" :choices="props.choices" :endpoint="'regiments.store'"/>
+    </td>
+  </tr>
+
+  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" v-if="addUnit">
+    <td colspan="9" class="p-5 bg-[#5983c1] border border-l-0 border-r-0 border-[#203D75]
+     border-t-gray-700 dark:bg-gray-800">
+      <UnitForm :regiment="regiment" :endpoint="'regiments.store.unit'"/>
     </td>
   </tr>
   <UnitList :regiment="regiment" v-if="listUnits === true"/>

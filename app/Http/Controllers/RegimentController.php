@@ -164,9 +164,32 @@ class RegimentController extends Controller
     {
         // https://dev.to/bradisrad83/proper-json-responses-for-laravel-api-2jfo
         $units = DB::table('regiments')
-            ->where('regiments.unit_id', '=', $regiment->id)->get();
+            ->where('regiments.unit_id', '=', $regiment->id)
+            ->get()->reverse()->values();
 
         return response()->json($units);
+    }
+
+    public function storeUnit(Request $request, Regiment $regiment): JsonResponse
+    {
+
+        $paintPath = ''; // https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
+        $imagePath = null;
+        if ($request->hasFile('thumbnail')) {
+            $imagePath = $request->file('thumbnail')->store('regiments'); // http://www.netzgesta.de/mapper/
+        }
+        $formData = $request->request->all();
+
+        $storeData = [
+            'name' => $formData['name'],
+            'unit_id' => $regiment->id, // Grey, Blue, Brown Grey
+            'user_id' => Auth::user()->id,
+            'thumbnail' => $imagePath,
+        ];
+
+        $unit = Regiment::create($storeData)->id;
+
+        return response()->json(['success' => true, 'id' => $unit]);
     }
 
     /**
