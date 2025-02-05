@@ -1,9 +1,11 @@
 <script setup>
 
 import {ref} from "vue";
+import AccordianLink from "@/Components/AccordianLink.vue";
 
 const props = defineProps({
-    gameData: Array
+    gameData: Array,
+    gameState: Object
 })
 
 const filterPaints = (paints) => {
@@ -39,7 +41,6 @@ let paints = [
 
 const colors = ref(paints);
 
-console.log(props.gameData);
 
 </script>
 
@@ -59,74 +60,33 @@ console.log(props.gameData);
            aria-label="Sidebar">
         <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
             <ul class="space-y-2 font-medium">
-                <li v-for="gamesystem in props.gameData">
-                    <button type="button"
-                            class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                            aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-
-                            <span
-                                class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">{{
-                                    gamesystem.name
-                                }}</span>
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                             :class="{'hidden':gamesystem.name !== 'Warhammer'}">
-                            viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                  stroke-width="2" d="m1 1 4 4 4-4"/>
-                        </svg>
-                    </button>
+                <li v-for="game in props.gameData">
+                    <AccordianLink :name="game.name"
+                                   :href="route('recipes.index', { gameId: game.id, factionId: 0, armyId: 0, unitId: 0})"
+                                   :open="(parseInt(props.gameState.gameId) === parseInt(game.id))"/>
                     <ul id="dropdown-example" class="py-2 space-y-2"
-                        :class="{'hiddenz':gamesystem.name !== 'Warhammer'}">
-                        <li v-for="faction in gamesystem.factions">
-                            <button type="button"
-                                    class="flex items-center w-full p-2 pl-4 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                    aria-controls="dropdown-example-inner"
-                                    data-collapse-toggle="dropdown-example-inner">
-                                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
-                                        {{ faction.name }}
-                                    </span>
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                     fill="none"
-                                     :class="{'hidden':faction.name !== 'Night Goblins'}"
-                                     viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                          stroke-width="2" d="m1 1 4 4 4-4"/>
-                                </svg>
-                            </button>
+                        :class="{'hidden':parseInt(props.gameState.gameId) !== parseInt(game.id)}">
+                        <li v-for="faction in game.factions">
+                            <AccordianLink :name="faction.name" class="!pl-4"
+                                           :href="route('recipes.index', { gameId: game.id, factionId: faction.id, armyId: 0, unitId: 0})"
+                                           :open="parseInt(props.gameState.factionId) === parseInt(faction.id)"/>
                             <ul id="dropdown-example-inner" class="hidd en py-2 space-y-2"
-                                :class="{'hiddenz':faction.name !== 'Night Goblins'}">
+                                :class="{'hidden':parseInt(props.gameState.factionId) !== parseInt(faction.id)}">
                                 <li v-for="army in faction.armys">
-                                    <button type="button"
-                                            :class="{'bg-gray-700':army.name === 'Spearmen', 'text-white':army.name === 'Spearmen'}"
-                                            class="flex items-center w-full p-2 pl-6 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                            aria-controls="dropdown-example-inner"
-                                            data-collapse-toggle="dropdown-example-inner">
-                                        <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
-                                            {{ army.name }}
-                                        </span>
-                                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                             fill="none"
-                                             :class="{'hidden':faction.name !== 'Night Goblins'}"
-                                             viewBox="0 0 10 6">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                  stroke-width="2" d="m1 1 4 4 4-4"/>
-                                        </svg>
-                                        <!--                                        <span-->
-                                        <!--                                            class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300"-->
-                                        <!--                                            :class="{'hidden':unit.faction_default !== true}">Default</span>-->
-                                    </button>
+                                    <AccordianLink :name="army.name" class="!pl-6"
+                                                   :href="route('recipes.index', { gameId: game.id, factionId: faction.id, armyId: army.id, unitId: 0})"
+                                                   :open="parseInt(props.gameState.armyId) === parseInt(army.id)"/>
+                                    <!--                                        <span-->
+                                    <!--                                            class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300"-->
+                                    <!--                                            :class="{'hidden':unit.faction_default !== true}">Default</span>-->
                                     <ul id="dropdown-example" class="py-2 space-y-2"
-                                        :class="{'hiddenz':gamesystem.name !== 'Warhammer'}">
+                                        :class="{'hidden':parseInt(props.gameState.armyId) !== parseInt(army.id)}">
                                         <li v-for="unit in army.units">
-                                            <button type="button"
-                                                    class="flex items-center w-full p-2 pl-10 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                                    aria-controls="dropdown-example-inner"
-                                                    data-collapse-toggle="dropdown-example-inner">
-                                                <span
-                                                    class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
-                                                    {{ faction.name }}
-                                                </span>
-                                            </button>
+                                            <AccordianLink :name="unit.name" class="!pl-8"
+                                                           :href="route('recipes.index', { gameId: game.id, factionId: faction.id, armyId: army.id, unitId: unit.id})"
+                                                           :active="parseInt(props.gameState.unitId) === parseInt(unit.id)"
+                                                           :last="true"
+                                                           :open="parseInt(props.gameState.unitId) === parseInt(unit.id)"/>
                                         </li>
                                     </ul>
                                 </li>

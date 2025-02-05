@@ -62,7 +62,9 @@ const logout = () => {
                                 <NavLink :href="route('regiments.index')" :active="route().current('regiments.index')">
                                     Regiments
                                 </NavLink>
-                                <NavLink :href="route('recipes.index')" :active="route().current('recipes.index')">
+                                <NavLink
+                                    :href="route('recipes.index', { gameId: 0, factionId: 0, armyId: 0, unitId: 0})"
+                                    :active="route().current('recipes.index')">
                                     Recipes
                                 </NavLink>
                             </div>

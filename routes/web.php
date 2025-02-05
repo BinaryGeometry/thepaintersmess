@@ -27,22 +27,20 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    //    Route::get('paints', [PaintController::class, 'index'])->name('index');
     Route::get('paints/{paint}/image/', [PaintController::class, 'image'])->name('paints.image'); // Add a custom resource route
-    //    Route::post('paints/{paint}', [PaintController::class, 'image'])->name('paints.image'); // Add a custom resource route
-    //    The POST method is not supported for route paints/47. Supported methods: PUT, PATCH, DELETE.
     Route::resource('paints', PaintController::class)
         ->only(['store', 'update', 'destroy', 'index']);
 
     Route::get('regiments/{regiment}/image/', [RegimentController::class, 'image'])->name('regiments.image'); // Add a custom resource route
     Route::get('regiments/{regiment}/units/', [RegimentController::class, 'units'])->name('regiments.units'); // Add a custom resource route
     Route::post('regiments/{regiment}/units/', [RegimentController::class, 'storeUnit'])->name('regiments.store.unit'); // Add a custom resource route
-
     Route::resource('regiments', RegimentController::class)
         ->only(['store', 'update', 'destroy', 'index']);
 
+    Route::get('recipes/game/{gameId}/faction/{factionId}/army/{armyId}/unit/{unitId}/', [RecipeController::class, 'index'])->name('recipes.index'); // Add a custom resource route
+    Route::get('recipes/image/{paint}/', [PaintController::class, 'image'])->name('recipes.image'); // Add a custom resource route
     Route::resource('recipes', RecipeController::class)
-        ->only(['index', 'store', 'update', 'destroy', 'index']);
+        ->only(['store', 'update', 'destroy']);
 
     // https://davecalnan.blog/laravel-routing-gotchas must be {paint} not {id}
 });

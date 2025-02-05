@@ -14,8 +14,10 @@ class RecipeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index($gameId, $factionId, $armyId, $unitId, Request $request): Response
     {
+        //        dd($gameId, $factionId, $armyId, $unitId);
+
         $units =
             DB::table('regiments')->whereNotNull('first_name')
                 ->where('regiments.user_id', '=', Auth::user()->id)
@@ -102,11 +104,28 @@ class RecipeController extends Controller
         //        $json_path = File::get(storage_path('/app/private/interface.json'));
 
         return Inertia::render('Recipes/Index', [
-            'units' => $units,
-            'armys' => $armys,
-            'games' => $games,
+            //            'units' => $units,
+            //            'armys' => $armys,
+            'games' => $games, // https://vuejs.org/guide/best-practices/accessibility.html#skip-link
+            'state' => [ // https://stackoverflow.com/questions/74103939/inertia-get-request-does-not-update-page-props
+                'gameId' => $gameId,
+                'armyId' => $armyId,
+                'factionId' => $factionId,
+                'unitId' => $unitId,
+            ],
             //            'instance' => json_decode($json_path, true),
         ]);
+    }
+
+    /**
+     * Get the image named $slug from storage and display it
+     */
+    public function image(Recipe $recipe)
+    {
+
+        $image = storage_path('/app/private/'.$recipe->thumbnail);
+
+        return response()->download($image);
     }
 
     /**
