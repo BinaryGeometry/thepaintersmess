@@ -101,20 +101,74 @@ class RecipeController extends Controller
             });
             $games[$key]['factions'] = $gameFactions;
         }
-        //        $json_path = File::get(storage_path('/app/private/interface.json'));
+
+        //        $armyRecipes = DB::table('recipes')->whereIn('regiment_id', [$armyId])->get();
+        //        $unitRecipes = DB::table('recipes')->whereIn('regiment_id', [$unitId])->get();
+        //        Rods Mods
+        //            quick osl
+        //            drybrush stegadon sccale green
+        //            drybrush caliban green
+        //            drybrush warpstone glow
+        //            drybrush moot green
+        //            drybrush flash gitz yellow
+        //            by rod davis
+        $steps = // https://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
+            DB::table('recipes')
+                ->whereNotNull('recipes.recipe_id')
+                ->where('recipes.user_id', '=', Auth::user()->id)
+                ->whereIn('rs.regiment_id', [$armyId, $unitId])
+                ->select('recipes.*',
+                    'rs.name as recipe_name',
+                    'rs.id as recipe_id',
+                    'rs.regiment_id as regiment_id',
+                    'rs.note as recipe_note',
+                    'reg.name as regiment_name'
+                )
+                ->join('recipes AS rs', 'rs.id', '=', 'recipes.recipe_id')
+                ->join('regiments AS reg', 'reg.id', '=', 'rs.regiment_id')
+                ->get()
+                ->toArray();
+
+        $recipesList = [];
+        foreach ($steps as $step) {
+            $recipesList[$step->recipe_id][] = $step;
+        }
+
+        $recipes = [];
+        foreach ($recipesList as $key => $steps) {
+            $recipes[] = [
+                'name' => $steps[0]->recipe_name,
+                'id' => $steps[0]->recipe_id,
+                'regiment_id' => $steps[0]->regiment_id,
+                'regiment_name' => $steps[0]->regiment_name,
+                'note' => $steps[0]->recipe_note,
+                'steps' => $steps,
+            ];
+        }
+
+        $unitRecipes = array_filter($recipes, function ($recipe) use ($unitId) {
+            return $recipe['regiment_id'] == $unitId;
+        });
+        $armyRecipes = array_filter($recipes, function ($recipe) use ($armyId) {
+            return $recipe['regiment_id'] == $armyId;
+        });
+
+        //        dd($unitRecipes, $armyRecipes);
 
         return Inertia::render('Recipes/Index', [
-            //            'units' => $units,
-            //            'armys' => $armys,
-            'games' => $games, // https://vuejs.org/guide/best-practices/accessibility.html#skip-link
-            'state' => [ // https://stackoverflow.com/questions/74103939/inertia-get-request-does-not-update-page-props
+            'games' => $games,
+            'state' => [
                 'gameId' => $gameId,
                 'armyId' => $armyId,
                 'factionId' => $factionId,
                 'unitId' => $unitId,
             ],
-            //            'instance' => json_decode($json_path, true),
+            'army_recipes' => array_values($armyRecipes),
+            'unit_recipes' => array_values($unitRecipes),
         ]);
+
+        // https://stackoverflow.com/questions/74103939/inertia-get-request-does-not-update-page-props
+        // https://vuejs.org/guide/best-practices/accessibility.html#skip-link
     }
 
     /**
