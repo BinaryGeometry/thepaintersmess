@@ -13,10 +13,10 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('slug')->nullable();
             //            $table->foreignId('parent_id')->constrained('regiments')->nullable();
-            $table->foreignId('game_id')->constrained('items')->nullable();
-            $table->foreignId('faction_id')->constrained('items')->nullable();
-            $table->foreignId('detachment_id')->constrained('items')->nullable();
-            $table->foreignId('unit_id')->constrained('items')->nullable();
+            $table->foreignId('game_id')->constrained('item')->nullable();
+            $table->foreignId('faction_id')->constrained('item')->nullable();
+            $table->foreignId('detachment_id')->constrained('item')->nullable();
+            $table->foreignId('unit_id')->constrained('item')->nullable();
             $table->json('meta')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->timestamps();
