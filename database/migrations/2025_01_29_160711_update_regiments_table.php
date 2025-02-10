@@ -26,7 +26,7 @@ return new class extends Migration
             //            $table->dropForeign(['extra_id']);
             $table->foreignId('extra_id')->nullable()->constraints('item');
             //            $table->dropForeign(['item_id']);
-            $table->foreignId('item_id')->nullable()->constraints('item')->change();
+            $table->foreignId('item_id')->nullable()->constraints('item');
 
         });
         Schema::enableForeignKeyConstraints();
