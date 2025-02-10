@@ -177,8 +177,7 @@ if (props.paint.thumbnail) {
 
                         <input type="color" id="head" name="head" v-model="form.color_hex"
                                class="flex-none my-2 rounded-full me-1 "
-                               style="width: 24px;height: 24px;"
-                               value="#888888"/>
+                               style="width: 24px;height: 24px;"/>
                     </span>
                     <input placeholder="color_hex" name="color_hex" v-model="form.color_hex"
                            class="flex-1 rounded-none rounded-e-lg "
