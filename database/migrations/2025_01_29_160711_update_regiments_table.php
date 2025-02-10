@@ -23,9 +23,9 @@ return new class extends Migration
             $table->dropForeign(['unit_id']);
             $table->foreignId('unit_id')->nullable()->constraints('regiments')->change();
 
-            $table->dropForeign(['extra_id']);
+            //            $table->dropForeign(['extra_id']);
             $table->foreignId('extra_id')->nullable()->constraints('item')->change();
-            $table->dropForeign(['item_id']);
+            //            $table->dropForeign(['item_id']);
             $table->foreignId('item_id')->nullable()->constraints('item')->change();
 
         });
