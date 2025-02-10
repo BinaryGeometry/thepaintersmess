@@ -122,10 +122,13 @@ class RecipeController extends Controller
                     'rs.id as recipe_id',
                     'rs.regiment_id as regiment_id',
                     'rs.note as recipe_note',
-                    'reg.name as regiment_name'
+                    'reg.name as regiment_name',
+                    'paint.paint_name as paint_name',
+                    'paint.color_hex as paint_color_hex',
                 )
                 ->join('recipes AS rs', 'rs.id', '=', 'recipes.recipe_id')
                 ->join('regiments AS reg', 'reg.id', '=', 'rs.regiment_id')
+                ->leftJoin('paints AS paint', 'paint.id', '=', 'recipes.paint_id')
                 ->get()
                 ->toArray();
 

@@ -23,16 +23,18 @@ console.log(props.army_recipes)
 
 
         <RecipeSidebar :game-data="props.games" :game-state="props.state"/>
-        <section>
-            <div class="p-4 sm:ml-64 mt-[65px]" v-if="(props.army_recipes.length > 0)">
+        <section class="mt-[65px]">
+            <div class="p-4 sm:ml-64 " v-if="(props.army_recipes.length > 0)">
                 <div class="p-4 border-2 border-gold-200 border- dashed rounded-lg dark:border-gray-700">
-                    <h2 class="text-4xl font-extrabold dark:text-white">{{ props.army_recipes[0].regiment_name }}</h2>
+                    <h2 class="text-4xl font-extrabold text-white dark:text-white mb-4 ">
+                        {{ props.army_recipes[0].regiment_name }}</h2>
                     <RecipeBuilder :recipes="props.army_recipes"/>
                 </div>
             </div>
             <div class="p-4 sm:ml-64 mt-[65px]" v-if="(props.unit_recipes.length > 0)">
                 <div class="p-4 border-2 border-gold-200 border- dashed rounded-lg dark:border-gray-700">
-                    <h2 class="text-4xl font-extrabold dark:text-white">{{ props.unit_recipes[0].regiment_name }}</h2>
+                    <h2 class="text-4xl font-extrabold text-white dark:text-white mb-4 ">
+                        {{ props.unit_recipes[0].regiment_name }}</h2>
                     <RecipeBuilder :recipes="props.unit_recipes"/>
                 </div>
             </div>
