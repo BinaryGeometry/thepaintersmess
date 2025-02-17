@@ -26,16 +26,19 @@ class RecipeController extends Controller
                     'regiments.name',
                     'regiments.thumbnail',
                     'regiments.unit_id as army_id',
+
                     'army.name as army_name',
                     'game.name as game_name',
                     'game.id as game_id',
                     'faction.id as faction_id',
                     'faction.name  AS faction_name')
-                ->join('regiments as army', 'army.id', '=', 'regiments.unit_id')
+                ->leftJoin('regiments as army', 'army.id', '=', 'regiments.unit_id')
                 ->join('item as game', 'game.id', '=', 'army.game_id')
                 ->join('item AS faction', 'faction.id', '=', 'army.faction_id')
                 ->get()
                 ->toArray();
+
+                // dd($units);
 
         $games = [];
         $gameIds = [];
@@ -156,10 +159,31 @@ class RecipeController extends Controller
             return $recipe['regiment_id'] == $armyId;
         });
 
+        $armys =
+            DB::table('regiments')->whereNull('unit_id')
+                ->where('regiments.user_id', '=', Auth::user()->id)
+                // ->select('*')
+                // ->whereNotNull('regiments.user_id')
+                ->select('regiments.id',
+                    'regiments.name',
+                    'regiments.thumbnail',
+                    'regiments.name as army_name',
+                    'game.name as game_name',
+                    'game.id as game_id',
+                    'faction.id as faction_id',
+                    'faction.name  AS faction_name')
+                // ->leftJoin('regiments as army', 'army.id', '=', 'regiments.unit_id')
+                ->join('item as game', 'game.id', '=', 'regiments.game_id')
+                ->join('item AS faction', 'faction.id', '=', 'regiments.faction_id')
+                ->get()
+                ->toArray();
+
+        // dd($armys);
         //        dd($unitRecipes, $armyRecipes);
 
         return Inertia::render('Recipes/Index', [
             'games' => $games,
+            'armys' => $armys,
             'state' => [
                 'gameId' => $gameId,
                 'armyId' => $armyId,

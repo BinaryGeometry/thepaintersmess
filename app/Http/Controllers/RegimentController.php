@@ -22,7 +22,7 @@ class RegimentController extends Controller
         $regiments = DB::table('regiments')
             ->whereNull('regiments.unit_id')
             ->where('regiments.user_id', '=', Auth::user()->id)
-            ->join('item as game', 'game.id', '=', 'regiments.game_id')
+            ->leftJoin('item as game', 'game.id', '=', 'regiments.game_id')
             ->leftJoin('item as faction', 'faction.id', '=', 'regiments.faction_id')
             ->leftJoin('item as detachment', 'detachment.id', '=', 'regiments.detachment_id')
             ->latest()->paginate(5, [
@@ -46,6 +46,8 @@ class RegimentController extends Controller
                     'user_id' => $item->user_id,
                 ];
             });
+
+           
 
         $choices = DB::select('
             select
@@ -72,7 +74,7 @@ class RegimentController extends Controller
     {
 
         $image = storage_path('/app/private/'.$regiment->thumbnail);
-
+        // dd($regiment);
         return response()->download($image);
     }
 
