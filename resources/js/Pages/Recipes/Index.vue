@@ -63,18 +63,19 @@ console.log(props.armys)
             <!--                                               :href="route('recipes.index', { gameId: game.id, factionId: faction.id, armyId: army.id, unitId: 0})"-->
             <!--                                               :open="parseInt(props.gameState.armyId) === parseInt(army.id)"?-->
             <div class="grid grid-cols-2 grid-rows-1 gap-4">
-                <div class="p-4" v-if="(props.army_recipes.length > 0)">
+                <div class="p-4" v-if="props.state.armyName.length > 0">
                     <div class="p-4 border-2 border-gold-200 border- dashed rounded-lg dark:border-gray-700">
                         <h2 class="text-4xl font-extrabold text-white dark:text-white mb-4 ">
-                            {{ props.army_recipes[0].regiment_name }}</h2>
-                        <RecipeBuilder :recipes="props.army_recipes"/>
+                            {{ props.state.armyName }}</h2>
+                        <RecipeBuilder :recipes="props.army_recipes" :state="props.state"/>
                     </div>
                 </div>
-                <div class="p-4" v-if="(props.unit_recipes.length > 0)">
+                <div class="p-4" v-if="props.state.unitName.length > 0">
                     <div class="p-4 border-2 border-gold-200 border- dashed rounded-lg dark:border-gray-700">
                         <h2 class="text-4xl font-extrabold text-white dark:text-white mb-4 ">
-                            {{ props.unit_recipes[0].regiment_name }}</h2>
-                        <RecipeBuilder :recipes="props.unit_recipes"/>
+                            {{ props.state.unitName }}</h2>
+                            
+                        <RecipeBuilder :recipes="props.unit_recipes" :state="props.state"/>
                     </div>
                 </div>
             </div>

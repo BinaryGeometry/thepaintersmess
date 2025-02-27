@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Recipe;
 use Auth;
 use DB;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,7 +29,6 @@ class RecipeController extends Controller
                     'regiments.name',
                     'regiments.thumbnail',
                     'regiments.unit_id as army_id',
-
                     'army.name as army_name',
                     'game.name as game_name',
                     'game.id as game_id',
@@ -37,8 +39,6 @@ class RecipeController extends Controller
                 ->join('item AS faction', 'faction.id', '=', 'army.faction_id')
                 ->get()
                 ->toArray();
-
-                // dd($units);
 
         $games = [];
         $gameIds = [];
@@ -105,16 +105,16 @@ class RecipeController extends Controller
             $games[$key]['factions'] = $gameFactions;
         }
 
-        //        $armyRecipes = DB::table('recipes')->whereIn('regiment_id', [$armyId])->get();
-        //        $unitRecipes = DB::table('recipes')->whereIn('regiment_id', [$unitId])->get();
-        //        Rods Mods
-        //            quick osl
-        //            drybrush stegadon sccale green
-        //            drybrush caliban green
-        //            drybrush warpstone glow
-        //            drybrush moot green
-        //            drybrush flash gitz yellow
-        //            by rod davis
+        $recipes = // https://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
+            DB::table('recipes')
+                ->whereNull('recipes.recipe_id')
+                ->where('recipes.user_id', '=', Auth::user()->id)
+                ->whereIn('recipes.regiment_id', [$armyId, $unitId])
+                ->select('recipes.*', 'reg.name as regiment_name')
+                ->leftJoin('regiments AS reg', 'reg.id', '=', 'recipes.regiment_id')
+                ->get()
+                ->toArray();
+        
         $steps = // https://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
             DB::table('recipes')
                 ->whereNotNull('recipes.recipe_id')
@@ -129,57 +129,45 @@ class RecipeController extends Controller
                     'paint.paint_name as paint_name',
                     'paint.color_hex as paint_color_hex',
                 )
-                ->join('recipes AS rs', 'rs.id', '=', 'recipes.recipe_id')
-                ->join('regiments AS reg', 'reg.id', '=', 'rs.regiment_id')
+                ->leftJoin('recipes AS rs', 'rs.id', '=', 'recipes.recipe_id')
+                ->leftJoin('regiments AS reg', 'reg.id', '=', 'rs.regiment_id')
                 ->leftJoin('paints AS paint', 'paint.id', '=', 'recipes.paint_id')
                 ->get()
                 ->toArray();
 
-        $recipesList = [];
-        foreach ($steps as $step) {
-            $recipesList[$step->recipe_id][] = $step;
-        }
-
-        $recipes = [];
-        foreach ($recipesList as $key => $steps) {
-            $recipes[] = [
-                'name' => $steps[0]->recipe_name,
-                'id' => $steps[0]->recipe_id,
-                'regiment_id' => $steps[0]->regiment_id,
-                'regiment_name' => $steps[0]->regiment_name,
-                'note' => $steps[0]->recipe_note,
-                'steps' => $steps,
-            ];
+        foreach ($recipes as $key => $recipe) {
+            
+            $recipeSteps = [];
+            foreach($steps as $stepKey => $step){
+                $recipeSteps[] = $step;
+            }
+            $recipes[$key]->steps = $steps;
+            
         }
 
         $unitRecipes = array_filter($recipes, function ($recipe) use ($unitId) {
-            return $recipe['regiment_id'] == $unitId;
+            return $recipe->regiment_id == $unitId;
         });
         $armyRecipes = array_filter($recipes, function ($recipe) use ($armyId) {
-            return $recipe['regiment_id'] == $armyId;
+            return $recipe->regiment_id == $armyId;
         });
-
-        $armys =
-            DB::table('regiments')->whereNull('unit_id')
-                ->where('regiments.user_id', '=', Auth::user()->id)
-                // ->select('*')
-                // ->whereNotNull('regiments.user_id')
-                ->select('regiments.id',
-                    'regiments.name',
-                    'regiments.thumbnail',
-                    'regiments.name as army_name',
-                    'game.name as game_name',
-                    'game.id as game_id',
-                    'faction.id as faction_id',
-                    'faction.name  AS faction_name')
-                // ->leftJoin('regiments as army', 'army.id', '=', 'regiments.unit_id')
+        
+        $armys = [];
+        $armyDetails =
+            DB::table('regiments')
+                ->where('regiments.id', '=', $armyId)
+                ->select('regiments.id', 'regiments.name', 'game.name as game_name',  'faction.name as faction_name')
                 ->join('item as game', 'game.id', '=', 'regiments.game_id')
                 ->join('item AS faction', 'faction.id', '=', 'regiments.faction_id')
                 ->get()
                 ->toArray();
 
-        // dd($armys);
-        //        dd($unitRecipes, $armyRecipes);
+        $unitDetails =
+                DB::table('regiments')
+                    ->where('regiments.id', '=', $unitId)
+                    ->select('*')
+                    ->get()
+                    ->toArray();
 
         return Inertia::render('Recipes/Index', [
             'games' => $games,
@@ -189,6 +177,11 @@ class RecipeController extends Controller
                 'armyId' => $armyId,
                 'factionId' => $factionId,
                 'unitId' => $unitId,
+
+                'gameName' => count((array)$armyDetails) >= 1 ? $armyDetails[0]->game_name : '',
+                'armyName' => count((array)$armyDetails) >= 1 ? $armyDetails[0]->name : '',
+                'factionName' => count((array)$armyDetails) >= 1 ? $armyDetails[0]->faction_name : '',
+                'unitName' => count((array)$unitDetails) >= 1 ? $unitDetails[0]->name : ''
             ],
             'army_recipes' => array_values($armyRecipes),
             'unit_recipes' => array_values($unitRecipes),
@@ -220,9 +213,38 @@ class RecipeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        $paintPath = ''; // https:// stackoverflow.com/questions/77211977/cannot-upload-images-on-update-method-laravel-vue-inertia
+        $imagePath = null;
+        if ($request->hasFile('thumbnail')) {
+            $imagePath = $request->file('thumbnail')->store('regiments'); // http://www.netzgesta.de/mapper/
+        }
+
+        $formData = $request->request->all();
+
+        // dd($formData);
+
+        if(0 === (int) $formData['unitId']){
+            $regimentId = (int) $formData['armyId'];
+        } else {
+            $regimentId = (int) $formData['unitId'];
+        }
+        $storeData = [
+            'name' => $formData['name'],
+            'regiment_id' => $regimentId,
+            'user_id' => Auth::user()->id,
+        ];
+        // dd($storeData);
+
+        $recipeId = Recipe::create($storeData)->id;
+
+        return redirect(route('recipes.index',[
+            'gameId' => $formData['gameId'], 
+            'armyId' => $formData['armyId'], 
+            'factionId' => $formData['factionId'], 
+            'unitId' => $formData['unitId'] 
+        ]));
     }
 
     /**

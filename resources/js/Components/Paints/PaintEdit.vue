@@ -61,9 +61,17 @@ const brandOptions = ref([
     {text: 'Vallejo', value: 'Vallejo'},
     {text: 'CMS', value: 'CMS'},
     {text: 'Two Thin Coats', value: 'Two Thin Coats'},
+    {text: 'AK', value: 'AK'},
+    {text: 'Liquetex', value: 'Liquetex'},
 ])
 
 const rangeOptions = ref([
+    {text: 'Ink [Liquetex]', value: 'Ink [Liquetex]', brand:'Liquetex'},
+    
+    {text: 'Acrylic [AK]', value: 'Acrylic [AK]', brand:'AK'},
+    {text: 'Intense [AK]', value: 'Intense [AK]', brand:'AK'},
+    {text: 'Varnish [AK]', value: 'Varnish [AK]', brand:'AK'},
+
     {text: 'Constrast [Citadel]', value: 'Constrast [Citadel]', brand: 'Citadel'},
     {text: 'Spray [Citadel]', value: 'Spray [Citadel]', brand: 'Citadel'},
     {text: 'Layer [Citadel]', value: 'Layer [Citadel]', brand: 'Citadel'},
